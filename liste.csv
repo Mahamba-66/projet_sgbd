@@ -1,0 +1,11 @@
+numero_carte_electeur,numero_identification,nom_complet,bureau_vote,telephone
+SN2024001,1234567890,Fatou Diop,Bureau 01 Dakar,771234567
+SN2024002,1234567891,Moussa Sow,Bureau 02 Dakar,772345678
+SN2024003,1234567892,Aminata Fall,Bureau 03 Dakar,773456789
+SN2024004,1234567893,Ibrahima Ndiaye,Bureau 01 Thies,774567890
+SN2024005,1234567894,Aissatou Ba,Bureau 02 Thies,775678901
+SN2024006,1234567895,Ousmane Diallo,Bureau 03 Thies,776789012
+SN2024007,1234567896,Mariama Sy,Bureau 01 Saint-Louis,777890123
+SN2024008,1234567897,Abdoulaye Kane,Bureau 02 Saint-Louis,778901234
+SN2024009,1234567898,Rama Sarr,Bureau 03 Saint-Louis,779012345
+SN2024010,1234567899,Cheikh Gueye,Bureau 01 Kaolack,770123456
