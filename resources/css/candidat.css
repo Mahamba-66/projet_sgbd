@@ -1,0 +1,137 @@
+:root {
+    --vert: #00853F;
+    --jaune: #FDEF42;
+    --rouge: #EF3340;
+    --blanc: #FFFFFF;
+    --noir: #222222;
+    --gris: #F5F5F5;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--blanc);
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 45px;
+    background-color: var(--blanc);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: auto;
+}
+
+.logo {
+    max-width: 85px; 
+    height: auto;
+}
+
+.slogan {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: var(--noir);
+}
+
+.container {
+    text-align: center;
+    padding: 42px;
+    max-width: 920px;
+    margin: auto;
+    background: var(--gris);
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-box {
+    background-color: var(--blanc);
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 32px;
+}
+
+.welcome-box h3 {
+    color: var(--vert);
+    font-size: 1.85rem;
+    margin-bottom: 18px;
+}
+
+.welcome-box p {
+    font-size: 1.15rem;
+    color: var(--noir);
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-bottom: 22px;
+}
+
+.stats-box {
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--blanc);
+    color: var(--vert);
+    font-size: 1.35rem;
+    text-align: center;
+    height: 155px;
+}
+
+.large-box {
+    background-color: var(--blanc);
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 155px;
+}
+
+.large-box h3 {
+    font-size: 1.55rem;
+    color: var(--vert);
+    margin-bottom: 12px;
+}
+
+.large-box p {
+    font-size: 1.45rem;
+    color: var(--noir);
+}
+
+.logout {
+    background-color: rgb(204, 201, 5);
+    color: var(--blanc);
+    padding: 9px 16px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s;
+    margin-top: 52px;
+}
+
+.logout:hover {
+    background-color: rgb(190, 185, 5);
+}
+
+footer {
+    background-color: var(--vert);
+    color: var(--blanc);
+    text-align: center;
+    padding: 27px 0;
+    font-size: 1.15rem;
+    box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(to right, var(--vert), #004D26);
+}

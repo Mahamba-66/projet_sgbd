@@ -1,0 +1,160 @@
+
+:root {
+    --vert: #00853F;
+    --jaune: #FDEF42;
+    --rouge: #EF3340;
+    --blanc: #FFFFFF;
+    --noir: #222222;
+    --gris-clair: #F5F5F5;
+    --gris-sombre: #D9D9D9;
+}
+
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--gris-clair);
+    margin: 0;
+    padding: 0;
+}
+
+
+.dashboard-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 30px;
+}
+
+/* Cartes d'information */
+.card {
+    background-color: var(--blanc);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 280px;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+}
+
+.card h3 {
+    color: var(--noir);
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: var(--gris-sombre);
+    font-size: 16px;
+}
+
+
+.btn-dashboard {
+    background-color: var(--vert);
+    color: var(--blanc);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 10px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-dashboard:hover {
+    background-color: var(--rouge);
+}
+
+/* Barre latérale de navigation */
+.sidebar {
+    background-color: var(--vert);
+    color: var(--blanc);
+    width: 250px;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.sidebar nav a {
+    color: var(--blanc);
+    display: block;
+    margin: 10px 0;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.sidebar nav a:hover {
+    color: var(--jaune);
+}
+
+.dashboard-main {
+    margin-left: 270px;
+    padding: 30px;
+    width: calc(100% - 270px);
+}
+
+.dashboard-main h1 {
+    font-size: 30px;
+    color: var(--noir);
+}
+
+/* Profil de l'utilisateur */
+.user-profile {
+    background-color: var(--blanc);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.user-profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.user-profile h3 {
+    margin: 10px 0;
+    color: var(--noir);
+}
+
+.user-profile p {
+    color: var(--gris-sombre);
+}
+
+.table-dashboard {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+
+.table-dashboard th, .table-dashboard td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--gris-sombre);
+}
+
+.table-dashboard th {
+    background-color: var(--vert);
+    color: var(--blanc);
+}
+
+.table-dashboard tr:hover {
+    background-color: var(--gris-clair);
+}
+
