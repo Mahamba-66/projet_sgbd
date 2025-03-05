@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,9 +10,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Création de la table jobs
         Schema::create('jobs', function (Blueprint $table) {
-            $table->id();
-            $table->string('queue')->index();
+            $table->id(); // Colonne id auto-incrémentée
+            $table->string('queue', 191)->index(); // Index sur la colonne queue
             $table->longText('payload');
             $table->unsignedTinyInteger('attempts');
             $table->unsignedInteger('reserved_at')->nullable();
@@ -21,27 +21,29 @@ return new class extends Migration
             $table->unsignedInteger('created_at');
         });
 
+        // Création de la table job_batches
         Schema::create('job_batches', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->string('name');
-            $table->integer('total_jobs');
-            $table->integer('pending_jobs');
-            $table->integer('failed_jobs');
+            $table->id(); // Utilisation d'un id auto-incrémenté comme clé primaire
+            $table->string('name', 191);
+            $table->unsignedInteger('total_jobs')->default(0); // Utilisation de unsignedInteger pour les entiers
+            $table->unsignedInteger('pending_jobs')->default(0);
+            $table->unsignedInteger('failed_jobs')->default(0);
             $table->longText('failed_job_ids');
             $table->mediumText('options')->nullable();
-            $table->integer('cancelled_at')->nullable();
-            $table->integer('created_at');
-            $table->integer('finished_at')->nullable();
+            $table->unsignedInteger('cancelled_at')->nullable();
+            $table->unsignedInteger('created_at');
+            $table->unsignedInteger('finished_at')->nullable();
         });
 
+        // Création de la table failed_jobs
         Schema::create('failed_jobs', function (Blueprint $table) {
-            $table->id();
-            $table->string('uuid')->unique();
+            $table->id(); // Colonne id auto-incrémentée
+            $table->string('uuid', 191)->unique(); // UUID unique
             $table->text('connection');
-            $table->text('queue');
+            $table->text('queue', 191);
             $table->longText('payload');
             $table->longText('exception');
-            $table->timestamp('failed_at')->useCurrent();
+            $table->timestamp('failed_at')->useCurrent(); // Valeur par défaut pour le timestamp
         });
     }
 
@@ -50,8 +52,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jobs');
-        Schema::dropIfExists('job_batches');
+        // Suppression des tables dans l'ordre inverse
         Schema::dropIfExists('failed_jobs');
+        Schema::dropIfExists('job_batches');
+        Schema::dropIfExists('jobs');
     }
 };

@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -12,11 +11,13 @@ class CreateActivityLogTable extends Migration
             $table->bigIncrements('id');
             $table->string('log_name')->nullable();
             $table->text('description');
-            $table->nullableMorphs('subject', 'subject');
-            $table->nullableMorphs('causer', 'causer');
+            $table->string('subject_type', 191)->nullable();  // Limite la longueur à 191 caractères
+            $table->unsignedBigInteger('subject_id')->nullable();  // Sujet ID est un identifiant, pas besoin de string
+            $table->string('causer_type', 191)->nullable();  // Limite la longueur à 191 caractères
+            $table->unsignedBigInteger('causer_id')->nullable();  // Causer ID est un identifiant
             $table->json('properties')->nullable();
             $table->timestamps();
-            $table->index('log_name');
+            $table->index(['subject_type', 'subject_id']);  // Crée un index sur les deux colonnes
         });
     }
 
