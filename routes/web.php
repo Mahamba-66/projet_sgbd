@@ -5,22 +5,20 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\SponsorshipController;
 use App\Http\Controllers\CandidateRegistrationController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\Auth\RegisterTypeController;
 use App\Http\Controllers\VoterDashboardController;
 use App\Http\Controllers\CandidateDashboardController;
-use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\CandidateController as AdminCandidateController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminCandidateController;
+use App\Http\Controllers\Admin\AdminSponsorshipController;
 use App\Http\Controllers\Admin\VoterController;
-use App\Http\Controllers\Admin\SponsorshipController as AdminSponsorshipController;
+use App\Http\Controllers\Admin\VoterImportController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\AuditLogController;
-use App\Http\Controllers\Admin\VoterImportController;
 
 // Page d'accueil simple sans Vite
 Route::get('/', function () {
@@ -124,53 +122,25 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::post('/register', [CandidateRegistrationController::class, 'register']);
         Route::get('/report/download', [CandidateDashboardController::class, 'downloadReport'])->name('candidate.report.download');
     });
-});
 
-// Routes pour les administrateurs
-Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    
-    // Routes pour les candidats
-    Route::get('/admin/candidates', [AdminCandidateController::class, 'index'])->name('admin.candidates.index');
-    Route::get('/admin/candidates/{candidate}', [AdminCandidateController::class, 'show'])->name('admin.candidates.show');
-    Route::post('/admin/candidates/{candidate}/validate', [AdminCandidateController::class, 'validate'])->name('admin.candidates.validate');
-    Route::post('/admin/candidates/{candidate}/reject', [AdminCandidateController::class, 'reject'])->name('admin.candidates.reject');
-    
-    // Routes pour les parrainages
-    Route::get('/admin/sponsorships', [AdminSponsorshipController::class, 'index'])->name('admin.sponsorships.index');
-    Route::post('/admin/sponsorships/{sponsorship}/validate', [AdminSponsorshipController::class, 'validate'])->name('admin.sponsorships.validate');
-    Route::post('/admin/sponsorships/{sponsorship}/reject', [AdminSponsorshipController::class, 'reject'])->name('admin.sponsorships.reject');
-    
-    // Gestion des électeurs 
-    Route::prefix('admin/voters')->name('admin.voters.')->group(function () {
-        Route::get('/', [VoterController::class, 'index'])->name('index');
-        Route::get('/import', [VoterImportController::class, 'show'])->name('import');
-        Route::post('/import', [VoterImportController::class, 'import'])->name('import.store');
-        Route::get('/eligible', [VoterController::class, 'eligibleList'])->name('eligible');
-        Route::get('/{id}', [VoterController::class, 'show'])->name('show');
-        Route::get('/{id}/verify', [VoterController::class, 'verify'])->name('verify');
-        Route::get('/{id}/validate', [VoterController::class, 'validateVoter'])->name('validate');
-    });
-    
-    // Statistiques et rapports
-    Route::get('/admin/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
-    Route::get('/admin/reports', [ReportController::class, 'index'])->name('admin.reports');
-
-    // Journal d'activités
-    Route::get('/admin/audit-logs', [AuditLogController::class, 'index'])->name('admin.audit-logs.index');
-    Route::get('/admin/audit-logs/{id}', [AuditLogController::class, 'show'])->name('admin.audit-logs.show');
-
-    // Routes exclusives au Super Admin
-    Route::middleware([\App\Http\Middleware\SuperAdminMiddleware::class])->group(function () {
-        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
-        Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create');
-        Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
-        Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-        Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
-        Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    // Routes pour les administrateurs
+    Route::middleware(['auth', 'admin'])->group(function () {
+        // Redirection de /admin vers /admin/dashboard
+        Route::get('/admin', function () {
+            return redirect()->route('admin.dashboard');
+        });
         
-        Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings');
-        Route::post('/admin/settings/update-password', [SettingController::class, 'updatePassword'])->name('admin.settings.update-password');
-        Route::get('/admin/logs', [AuditLogController::class, 'index'])->name('admin.logs');
+        Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        
+        // Routes pour les candidats
+        Route::get('/admin/candidates', [\App\Http\Controllers\Admin\AdminCandidateController::class, 'index'])->name('admin.candidates.index');
+        Route::get('/admin/candidates/{candidate}', [\App\Http\Controllers\Admin\AdminCandidateController::class, 'show'])->name('admin.candidates.show');
+        Route::post('/admin/candidates/{candidate}/validate', [\App\Http\Controllers\Admin\AdminCandidateController::class, 'validate'])->name('admin.candidates.validate');
+        Route::post('/admin/candidates/{candidate}/reject', [\App\Http\Controllers\Admin\AdminCandidateController::class, 'reject'])->name('admin.candidates.reject');
+        
+        // Routes pour les parrainages
+        Route::get('/admin/sponsorships', [\App\Http\Controllers\Admin\AdminSponsorshipController::class, 'index'])->name('admin.sponsorships.index');
+        Route::post('/admin/sponsorships/{sponsorship}/validate', [\App\Http\Controllers\Admin\AdminSponsorshipController::class, 'validate'])->name('admin.sponsorships.validate');
+        Route::post('/admin/sponsorships/{sponsorship}/reject', [\App\Http\Controllers\Admin\AdminSponsorshipController::class, 'reject'])->name('admin.sponsorships.reject');
     });
 });

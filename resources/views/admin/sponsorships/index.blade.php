@@ -50,10 +50,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <div class="mb-3">
-                    <input type="search" class="form-control" placeholder="Rechercher..." aria-label="Rechercher">
-                </div>
-                <table class="table table-bordered table-striped" id="sponsorshipsTable" width="100%">
+                <table class="table table-bordered" id="sponsorshipsTable">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -76,7 +73,7 @@
                             <td>
                                 {{ $sponsorship->voter->name }}
                             </td>
-                            <td>{{ $sponsorship->voter->region->name }}</td>
+                            <td>{{ $sponsorship->voter->region }}</td>
                             <td>
                                 @switch($sponsorship->status)
                                     @case('pending')
@@ -102,15 +99,20 @@
                                             data-id="{{ $sponsorship->id }}">
                                         <i class="fas fa-times"></i> Rejeter
                                     </button>
+                                @else
+                                    <button class="btn btn-info btn-sm" 
+                                            onclick="showDetails({{ $sponsorship->id }})">
+                                        <i class="fas fa-info-circle"></i> Détails
+                                    </button>
                                 @endif
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-                <div class="mt-3">
-                    {{ $sponsorships->links() }}
-                </div>
+            </div>
+            <div class="mt-4">
+                {{ $sponsorships->links() }}
             </div>
         </div>
     </div>
@@ -157,62 +159,48 @@
 </div>
 @endsection
 
-@push('scripts')
+@section('scripts')
 <script>
 $(document).ready(function() {
-    // Configuration simple de DataTables
-    var table = $('#sponsorshipsTable').DataTable({
+    $('#sponsorshipsTable').DataTable({
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json'
         },
-        pageLength: 15,
-        ordering: false,
-        searching: false,
-        paging: false,
-        info: false
+        order: [[0, 'desc']],
+        pageLength: 20
     });
 
     // Gestion de la validation
     $('.validate-btn').click(function() {
         const id = $(this).data('id');
         if(confirm('Êtes-vous sûr de vouloir valider ce parrainage ?')) {
-            $.post(`/admin/sponsorships/${id}/validate`, {
-                _token: '{{ csrf_token() }}'
-            })
-            .done(function() {
-                location.reload();
-            })
-            .fail(function(xhr) {
-                alert('Une erreur est survenue');
-            });
+            $.post(`/admin/sponsorship/${id}/validate`)
+                .done(function() {
+                    location.reload();
+                })
+                .fail(function(xhr) {
+                    alert('Une erreur est survenue');
+                });
         }
     });
 
     // Gestion du rejet
     $('.reject-btn').click(function() {
         const id = $(this).data('id');
-        $('#rejectForm').attr('action', `/admin/sponsorships/${id}/reject`);
+        $('#rejectForm').attr('action', `/admin/sponsorship/${id}/reject`);
         $('#rejectModal').modal('show');
     });
+});
 
-    // Soumission du formulaire de rejet
-    $('#rejectForm').submit(function(e) {
-        e.preventDefault();
-        const action = $(this).attr('action');
-        const reason = $('#reason').val();
-
-        $.post(action, {
-            _token: '{{ csrf_token() }}',
-            reason: reason
-        })
-        .done(function() {
-            $('#rejectModal').modal('hide');
-            location.reload();
+function showDetails(id) {
+    $.get(`/admin/sponsorship/${id}/details`)
+        .done(function(data) {
+            $('#sponsorshipDetails').html(data);
+            $('#detailsModal').modal('show');
         })
         .fail(function(xhr) {
             alert('Une erreur est survenue');
         });
-    });
-});
+}
 </script>
-@endpush
+@endsection
