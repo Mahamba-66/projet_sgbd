@@ -1,0 +1,208 @@
+/* Définition des couleurs */
+:root {
+    --vert: #00853F;
+    --jaune: #FDEF42;
+    --rouge: #EF3340;
+    --blanc: #FFFFFF;
+    --noir: #222222;
+    --gris: #F5F5F5;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Style général */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--blanc);
+    margin: 0;
+    padding: 0;
+}
+
+/* En-tête avec logo et slogan */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    background-color: var(--blanc);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Bouton de déconnexion en haut à gauche */
+.logout {
+    position: absolute;
+    right: 20px;
+    top: 22px;
+    background-color: var(--rouge);
+    color: var(--blanc);
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.logout:hover {
+    background-color: darkred;
+}
+
+.logout-mobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .logout {
+        display: none; /* Masquer le bouton en haut pour les petits écrans */
+    }
+    .logout-mobile {
+        display: inline-block;
+        margin-top: 20px;
+        background-color: var(--rouge);
+        color: var(--blanc);
+        padding: 8px 15px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+    .logout-mobile:hover {
+        background-color: darkred;
+    }
+}
+
+/* Logo et slogan */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: auto;
+}
+
+.logo {
+    max-width: 80px;
+    height: auto;
+}
+
+.slogan {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--noir);
+}
+
+/* Conteneur principal */
+.container {
+    text-align: center;
+    padding: 40px;
+    max-width: 800px;
+    margin: auto;
+    background: var(--gris);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Infos de l'utilisateur */
+.user-info {
+    background: var(--blanc);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.user-info h2 {
+    color: var(--vert);
+    text-align: center;
+}
+
+/* Titres */
+h2 {
+    color: var(--vert);
+    font-size: 2rem;
+}
+
+h3 {
+    color: var(--noir);
+    font-size: 1.5rem;
+}
+
+/* Candidat */
+
+/* Candidat */
+.candidat-info h3 {
+    color: var(--noir);
+    font-size: 1.5rem;
+    position: relative;
+    padding-left: 30px; /* Espace pour la barre */
+}
+
+/* Barre jaune devant le nom */
+.candidat-info h3::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px; /* Largeur de la barre */
+    height: 60%; /* Hauteur de la barre */
+    background-color: var(--jaune);
+}
+
+.candidat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--blanc);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin: 15px 0;
+}
+
+.candidat-info {
+    text-align: left;
+    flex: 2;
+}
+
+.candidat-photo {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.candidat-photo img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Bouton Parrainage */
+.btn {
+    background-color: var(--vert);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background-color: var(--rouge);
+}
+
+footer {
+    background-color: var(--vert);
+    color: var(--blanc);
+    text-align: center;
+    padding: 25px 0;
+    font-size: 1.1rem;
+    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(to right, var(--vert), #004D26);
+}
