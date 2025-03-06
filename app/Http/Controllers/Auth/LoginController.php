@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Http\Controllers\Auth;
 
@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\ActivityLog;
+
+
 
 class LoginController extends Controller
 {
@@ -27,27 +29,21 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        activity()
-            ->causedBy($user)
-            ->performedOn($user)
-            ->log('login');
+        activity()->causedBy($user)->performedOn($user)->log('login');
 
-        if ($user->role === 'admin' || $user->role === 'super_admin') {
-            return redirect()->route('admin.dashboard');
-        }
-        
-        if ($user->role === 'candidate') {
-            return redirect()->route('candidate.dashboard');
-        }
-        
-        if ($user->role === 'voter') {
-            return redirect()->route('voter.dashboard');
+        $routes = [
+            'admin' => 'admin.dashboard',
+            'super_admin' => 'admin.dashboard',
+            'candidate' => 'candidate.dashboard',
+            'voter' => 'voter.dashboard'
+        ];
+
+        if (isset($routes[$user->role])) {
+            return redirect()->route($routes[$user->role]);
         }
 
-        // Si le rôle n'est pas reconnu, déconnecter l'utilisateur
         Auth::logout();
-        return redirect()->route('login')
-            ->with('error', 'Votre compte n\'a pas les autorisations nécessaires.');
+        return redirect()->route('login')->with('error', 'Votre compte n\'a pas les autorisations nécessaires.');
     }
 
     protected function sendFailedLoginResponse(Request $request)
@@ -63,7 +59,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect()->route('login')
-            ->with('success', 'Vous avez été déconnecté avec succès.');
+        return redirect()->route('login')->with('success', 'Vous avez été déconnecté avec succès.');
     }
 }
