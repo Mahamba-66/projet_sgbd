@@ -20,36 +20,25 @@ class CandidateFactory extends Factory
         ];
     }
 
+    public function statusState($status, $validationDate = null, $rejectionReason = null)
+    {
+        return $this->state(function () use ($status, $validationDate, $rejectionReason) {
+            return compact('status', 'validation_date', 'rejection_reason');
+        });
+    }
+
     public function pending()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'status' => 'pending',
-                'validation_date' => null,
-                'rejection_reason' => null
-            ];
-        });
+        return $this->statusState('pending');
     }
 
     public function validated()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'status' => 'validated',
-                'validation_date' => now(),
-                'rejection_reason' => null
-            ];
-        });
+        return $this->statusState('validated', now());
     }
 
     public function rejected()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'status' => 'rejected',
-                'validation_date' => null,
-                'rejection_reason' => fake()->sentence()
-            ];
-        });
+        return $this->statusState('rejected', null, fake()->sentence());
     }
 }
