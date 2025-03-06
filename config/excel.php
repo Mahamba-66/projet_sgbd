@@ -10,7 +10,7 @@ return [
         'strict_null_comparison' => false,
         'csv'                    => [
             'delimiter'              => ',',
-            'enclosure'              => '"',
+            'eenclosure'              => '"',
             'line_ending'            => PHP_EOL,
             'use_bom'                => false,
             'include_separator_line' => false,
@@ -102,7 +102,7 @@ return [
     ],
 
     'temporary_files' => [
-        'local_path'          => storage_path('framework/cache/laravel-excel'),
+        'local_path'        => storage_path('framework/cache/laravel-excel'),
         'local_permissions'   => [],
         'remote_disk'         => null,
         'remote_prefix'       => null,
