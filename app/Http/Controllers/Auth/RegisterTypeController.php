@@ -42,15 +42,12 @@ class RegisterTypeController extends Controller
             'card_number' => 'required|string'
         ]);
 
-        // Vérifier si l'électeur est éligible
         $eligibleVoter = EligibleVoter::where('card_number', $request->card_number)
             ->where('is_registered', false)
             ->first();
 
         if (!$eligibleVoter) {
-            return back()
-                ->withInput()
-                ->withErrors(['card_number' => 'Ce numéro de carte n\'est pas valide ou a déjà été utilisé.']);
+            return back()->withInput()->withErrors(['card_number' => 'Carte invalide ou déjà utilisée.']);
         }
 
         DB::beginTransaction();
@@ -63,37 +60,32 @@ class RegisterTypeController extends Controller
                 'region_id' => $request->region_id
             ]);
 
-            // Marquer l'électeur comme inscrit
             $eligibleVoter->update(['is_registered' => true]);
 
             DB::commit();
-
             Auth::login($user);
+
             return redirect()->route('voter.dashboard');
         } catch (\Exception $e) {
             DB::rollback();
-            return back()
-                ->withInput()
-                ->withErrors(['error' => 'Une erreur est survenue lors de l\'inscription.']);
+            return back()->withInput()->withErrors(['error' => 'Erreur lors de l\'inscription.']);
         }
     }
 
     public function registerCandidate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Password::defaults()],
-            'nin' => ['required', 'string', 'size:13', 'unique:users'],
-            'birth_date' => ['required', 'date', 'before:' . date('Y-m-d', strtotime('-35 years'))],
-            'party_name' => ['required', 'string', 'max:255'],
-            'party_position' => ['required', 'string', 'max:255'],
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|confirmed|' . Password::defaults(),
+            'nin' => 'required|string|size:13|unique:users',
+            'birth_date' => 'required|date|before:' . now()->subYears(35)->toDateString(),
+            'party_name' => 'required|string|max:255',
+            'party_position' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput();
+            return back()->withErrors($validator)->withInput();
         }
 
         try {
@@ -117,11 +109,9 @@ class RegisterTypeController extends Controller
             return redirect()->route('candidate.dashboard');
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('Erreur lors de l\'inscription du candidat : ' . $e->getMessage());
-            
-            return back()
-                ->withInput()
-                ->withErrors(['error' => 'Une erreur est survenue lors de l\'inscription.']);
+            Log::error('Erreur lors de l\'inscription du candidat: ' . $e->getMessage());
+
+            return back()->withInput()->withErrors(['error' => 'Erreur lors de l\'inscription.']);
         }
     }
 }
