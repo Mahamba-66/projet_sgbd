@@ -28,18 +28,14 @@ class SponsorshipController extends Controller
 
     public function create(User $candidate)
     {
-        if (!Auth::user()->isVoter()) {
-            abort(403, 'Seuls les électeurs peuvent parrainer.');
-        }
-
-        if (Sponsorship::where('voter_id', Auth::id())->exists()) {
+        if (!Auth::user()->isVoter() || Sponsorship::where('voter_id', Auth::id())->exists()) {
             return redirect()->route('voter.candidates.index')
-                ->with('error', 'Vous avez déjà parrainé un candidat.');
+                ->with('error', 'Vous ne pouvez pas parrainer ce candidat.');
         }
 
         if ($candidate->status !== 'validated') {
             return redirect()->route('voter.candidates.index')
-                ->with('error', 'Ce candidat n\'est pas encore validé.');
+                ->with('error', 'Ce candidat n\'est pas validé.');
         }
 
         return view('voter.sponsorships.create', compact('candidate'));
@@ -47,13 +43,9 @@ class SponsorshipController extends Controller
 
     public function store(Request $request, User $candidate)
     {
-        if (!Auth::user()->isVoter()) {
-            abort(403, 'Seuls les électeurs peuvent parrainer.');
-        }
-
-        if (Sponsorship::where('voter_id', Auth::id())->exists()) {
+        if (!Auth::user()->isVoter() || Sponsorship::where('voter_id', Auth::id())->exists()) {
             return redirect()->route('voter.candidates.index')
-                ->with('error', 'Vous avez déjà parrainé un candidat.');
+                ->with('error', 'Vous ne pouvez pas parrainer ce candidat.');
         }
 
         $sponsorship = Sponsorship::create([
@@ -68,7 +60,7 @@ class SponsorshipController extends Controller
             ->log('sponsorship_created');
 
         return redirect()->route('voter.sponsorships.index')
-            ->with('success', 'Votre parrainage a été enregistré avec succès.');
+            ->with('success', 'Parrainage enregistré.');
     }
 
     public function show(Sponsorship $sponsorship)
