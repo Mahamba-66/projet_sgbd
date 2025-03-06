@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Region;
 use App\Models\Sponsorship;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -21,27 +22,18 @@ class AdminController extends Controller
 
     public function statistics()
     {
-        $totalVoters = User::where('role', 'voter')->count();
-        $totalCandidates = User::where('role', 'candidate')->count();
-        $totalSponsorships = Sponsorship::count();
-        $pendingSponsorships = Sponsorship::where('status', 'pending')->count();
-        $approvedSponsorships = Sponsorship::where('status', 'approved')->count();
-        $rejectedSponsorships = Sponsorship::where('status', 'rejected')->count();
-
         $stats = [
-            'total_voters' => $totalVoters,
-            'total_candidates' => $totalCandidates,
-            'total_sponsorships' => $totalSponsorships,
-            'pending_sponsorships' => $pendingSponsorships,
-            'approved_sponsorships' => $approvedSponsorships,
-            'rejected_sponsorships' => $rejectedSponsorships
+            'total_voters' => User::where('role', 'voter')->count(),
+            'total_candidates' => User::where('role', 'candidate')->count(),
+            'total_sponsorships' => Sponsorship::count(),
+            'pending_sponsorships' => Sponsorship::where('status', 'pending')->count(),
+            'approved_sponsorships' => Sponsorship::where('status', 'approved')->count(),
+            'rejected_sponsorships' => Sponsorship::where('status', 'rejected')->count(),
         ];
 
-        if (request()->wantsJson()) {
-            return response()->json($stats);
-        }
-
-        return view('admin.statistics', compact('stats'));
+        return request()->wantsJson() 
+            ? response()->json($stats) 
+            : view('admin.statistics', compact('stats'));
     }
 
     public function pendingSponsorships()
@@ -50,11 +42,9 @@ class AdminController extends Controller
             ->where('status', 'pending')
             ->paginate(20);
 
-        if (request()->wantsJson()) {
-            return response()->json($sponsorships);
-        }
-
-        return view('admin.pending-sponsorships', compact('sponsorships'));
+        return request()->wantsJson() 
+            ? response()->json($sponsorships) 
+            : view('admin.pending-sponsorships', compact('sponsorships'));
     }
 
     public function voters()
@@ -76,40 +66,26 @@ class AdminController extends Controller
         return view('admin.voters.show', compact('voter'));
     }
 
-    public function blockVoter(Request $request, $id)
+    public function changeVoterStatus(Request $request, $id, $status)
     {
         $voter = User::where('role', 'voter')->findOrFail($id);
-        
-        $request->validate([
-            'reason' => 'required|string|max:255'
-        ]);
+        $reason = $request->input('reason', null);
 
         $voter->update([
-            'status' => 'blocked',
-            'blocked_reason' => $request->reason,
-            'blocked_at' => now()
+            'status' => $status,
+            $status === 'blocked' ? 'blocked_reason' : 'validated_at' => $reason ?: now()
         ]);
 
-        // Si l'électeur a un parrainage en cours, on l'annule
-        if ($voter->sponsorship) {
+        if ($status === 'blocked' && $voter->sponsorship) {
             $voter->sponsorship->update(['status' => 'cancelled']);
         }
 
-        return redirect()->route('admin.voters.show', $voter)
-            ->with('success', 'L\'électeur a été bloqué avec succès.');
-    }
-
-    public function validateVoter($id)
-    {
-        $voter = User::where('role', 'voter')->findOrFail($id);
-        
-        $voter->update([
-            'status' => 'active',
-            'validated_at' => now()
-        ]);
+        $message = $status === 'blocked' 
+            ? 'L\'électeur a été bloqué avec succès.' 
+            : 'L\'électeur a été validé avec succès.';
 
         return redirect()->route('admin.voters.show', $voter)
-            ->with('success', 'L\'électeur a été validé avec succès.');
+            ->with('success', $message);
     }
 
     public function searchVoters(Request $request)
@@ -117,12 +93,10 @@ class AdminController extends Controller
         $query = $request->get('q');
         
         $voters = User::where('role', 'voter')
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                    ->orWhere('email', 'like', "%{$query}%")
-                    ->orWhere('nin', 'like', "%{$query}%")
-                    ->orWhere('voter_card_number', 'like', "%{$query}%");
-            })
+            ->where(fn($q) => $q->where('name', 'like', "%{$query}%")
+                ->orWhere('email', 'like', "%{$query}%")
+                ->orWhere('nin', 'like', "%{$query}%")
+                ->orWhere('voter_card_number', 'like', "%{$query}%"))
             ->with('region')
             ->paginate(15);
 
@@ -139,38 +113,16 @@ class AdminController extends Controller
             'Expires' => '0'
         ];
 
-        $voters = User::where('role', 'voter')
-            ->with('region')
-            ->get();
+        $voters = User::where('role', 'voter')->with('region')->get();
 
         $callback = function() use ($voters) {
             $file = fopen('php://output', 'w');
             
-            // En-têtes CSV
-            fputcsv($file, [
-                'ID',
-                'Nom',
-                'Email',
-                'NIN',
-                'Carte d\'électeur',
-                'Téléphone',
-                'Région',
-                'Statut',
-                'Date d\'inscription'
-            ]);
-
-            // Données
+            fputcsv($file, ['ID', 'Nom', 'Email', 'NIN', 'Carte d\'électeur', 'Téléphone', 'Région', 'Statut', 'Date d\'inscription']);
             foreach ($voters as $voter) {
                 fputcsv($file, [
-                    $voter->id,
-                    $voter->name,
-                    $voter->email,
-                    $voter->nin,
-                    $voter->voter_card_number,
-                    $voter->phone,
-                    $voter->region->name,
-                    $voter->status,
-                    $voter->created_at->format('Y-m-d H:i:s')
+                    $voter->id, $voter->name, $voter->email, $voter->nin, $voter->voter_card_number, 
+                    $voter->phone, $voter->region->name, $voter->status, $voter->created_at->format('Y-m-d H:i:s')
                 ]);
             }
 
