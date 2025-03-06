@@ -17,29 +17,28 @@ class CandidateController extends Controller
     public function voterIndex()
     {
         $candidates = User::where('role', 'candidate')
-                        ->where('status', 'validated')
-                        ->get();
+            ->where('status', 'validated')
+            ->get();
         return view('voter.candidates.index', compact('candidates'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'party_name' => 'required|string|max:255',
         ]);
 
-        $validated['role'] = 'candidate';
-        $validated['status'] = 'pending';
+        $candidate = User::create([
+            'name' => $request->name,
+            'party_name' => $request->party_name,
+            'role' => 'candidate',
+            'status' => 'pending',
+        ]);
 
-        $candidate = User::create($validated);
-
-        if ($request->wantsJson()) {
-            return response()->json($candidate, 201);
-        }
-
-        return redirect()->route('admin.candidates.index')
-            ->with('success', 'Candidat créé avec succès');
+        return $request->wantsJson() 
+            ? response()->json($candidate, 201) 
+            : redirect()->route('admin.candidates.index')->with('success', 'Candidat créé avec succès');
     }
 
     public function validateCandidate(User $candidate)
@@ -50,15 +49,12 @@ class CandidateController extends Controller
 
         $candidate->update([
             'status' => 'validated',
-            'validation_date' => now()
+            'validation_date' => now(),
         ]);
 
-        if (request()->wantsJson()) {
-            return response()->json($candidate);
-        }
-
-        return redirect()->route('admin.candidates.index')
-            ->with('success', 'Candidat validé avec succès');
+        return request()->wantsJson()
+            ? response()->json($candidate)
+            : redirect()->route('admin.candidates.index')->with('success', 'Candidat validé avec succès');
     }
 
     public function reject(Request $request, User $candidate)
@@ -67,20 +63,15 @@ class CandidateController extends Controller
             return back()->with('error', 'Cet utilisateur n\'est pas un candidat');
         }
 
-        $validated = $request->validate([
-            'rejection_reason' => 'required|string|max:255'
-        ]);
+        $request->validate(['rejection_reason' => 'required|string|max:255']);
 
         $candidate->update([
             'status' => 'rejected',
-            'rejection_reason' => $validated['rejection_reason']
+            'rejection_reason' => $request->rejection_reason,
         ]);
 
-        if ($request->wantsJson()) {
-            return response()->json($candidate);
-        }
-
-        return redirect()->route('admin.candidates.index')
-            ->with('success', 'Candidat rejeté avec succès');
+        return $request->wantsJson()
+            ? response()->json($candidate)
+            : redirect()->route('admin.candidates.index')->with('success', 'Candidat rejeté avec succès');
     }
 }
