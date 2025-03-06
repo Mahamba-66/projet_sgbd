@@ -10,20 +10,9 @@ class RegionFactory extends Factory
     {
         return [
             'name' => fake()->unique()->randomElement([
-                'Dakar',
-                'Thiès',
-                'Diourbel',
-                'Fatick',
-                'Kaolack',
-                'Kaffrine',
-                'Kolda',
-                'Kédougou',
-                'Louga',
-                'Matam',
-                'Saint-Louis',
-                'Sédhiou',
-                'Tambacounda',
-                'Ziguinchor'
+                'Dakar', 'Thiès', 'Diourbel', 'Fatick', 'Kaolack', 'Kaffrine',
+                'Kolda', 'Kédougou', 'Louga', 'Matam', 'Saint-Louis', 'Sédhiou',
+                'Tambacounda', 'Ziguinchor'
             ]),
             'code' => fake()->unique()->numerify('REG###'),
         ];
