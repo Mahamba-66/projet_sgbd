@@ -22,6 +22,11 @@ class User extends Authenticatable
     const ROLE_VOTER = 'voter';
     const ROLE_CANDIDATE = 'candidate';
 
+    const STATUS_ACTIVE = 'active';
+    const STATUS_PENDING = 'pending';
+    const STATUS_REJECTED = 'rejected';
+    const STATUS_BLOCKED = 'blocked';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,7 +46,8 @@ class User extends Authenticatable
         'email_verified_at',
         'birth_date',
         'party_name',
-        'party_position'
+        'party_position',
+        'address'
     ];
 
     /**
@@ -132,7 +138,7 @@ class User extends Authenticatable
      */
     public function isPending(): bool
     {
-        return $this->status === 'pending';
+        return $this->status === self::STATUS_PENDING;
     }
 
     /**
@@ -140,7 +146,7 @@ class User extends Authenticatable
      */
     public function isActive(): bool
     {
-        return $this->status === 'active';
+        return $this->status === self::STATUS_ACTIVE;
     }
 
     /**
@@ -148,7 +154,7 @@ class User extends Authenticatable
      */
     public function isBlocked(): bool
     {
-        return $this->status === 'blocked';
+        return $this->status === self::STATUS_BLOCKED;
     }
 
     /**
@@ -165,5 +171,35 @@ class User extends Authenticatable
     public function givenSponsorships(): HasMany
     {
         return $this->hasMany(Sponsorship::class, 'voter_id');
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === self::ROLE_SUPERADMIN;
+    }
+
+    public function canSponsor(): bool
+    {
+        return $this->isVoter() && $this->isActive() && $this->sponsorships()->count() < config('sponsorship.max_per_voter');
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+            'verification_code' => null,
+        ])->save();
+    }
+
+    public function generateVerificationCode(): string
+    {
+        $code = sprintf('%06d', random_int(0, 999999));
+        $this->forceFill(['verification_code' => $code])->save();
+        return $code;
     }
 }
