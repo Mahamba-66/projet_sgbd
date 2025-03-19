@@ -1,0 +1,23 @@
+{
+    "name": "parrainage-app",
+    "description": "Application de parrainage",
+    "keywords": ["php", "laravel"],
+    "addons": ["jawsdb:kitefin"],
+    "env": {
+        "APP_NAME": {
+            "value": "Parrainage App"
+        },
+        "APP_ENV": {
+            "value": "production"
+        },
+        "APP_DEBUG": {
+            "value": "false"
+        },
+        "APP_KEY": {
+            "generator": "secret"
+        }
+    },
+    "scripts": {
+        "postdeploy": "php artisan migrate --force"
+    }
+}

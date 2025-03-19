@@ -1,0 +1,33 @@
+name: parrainage-app
+services:
+- name: web
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: SeydinaAlioune/parrainage-app
+  build_command: |
+    composer install --no-interaction --prefer-dist --optimize-autoloader
+    npm ci
+    npm run build
+  run_command: heroku-php-apache2 public/
+  environment_slug: php
+  instance_size_slug: basic-xxs
+  instance_count: 1
+  envs:
+  - key: APP_NAME
+    value: "Parrainage App"
+  - key: APP_ENV
+    value: "production"
+  - key: APP_DEBUG
+    value: "false"
+  - key: APP_KEY
+    value: "base64:$(openssl rand -base64 32)"
+    type: SECRET
+  - key: DB_CONNECTION
+    value: "mysql"
+
+databases:
+- engine: MYSQL
+  name: db
+  version: "8"
+  production: false

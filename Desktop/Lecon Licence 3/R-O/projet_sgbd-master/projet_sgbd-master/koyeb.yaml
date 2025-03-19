@@ -1,0 +1,27 @@
+name: parrainage-app
+service:
+  name: web
+  type: web
+  ports:
+    - port: 8080
+      http: /
+  env:
+    - name: APP_NAME
+      value: "Parrainage App"
+    - name: APP_ENV
+      value: "production"
+    - name: APP_DEBUG
+      value: "false"
+  build:
+    builder: pack
+    buildpacks:
+      - heroku/php
+    env:
+      - name: PHP_VERSION
+        value: "8.2"
+  resources:
+    vcpu: 1
+    memory: 512
+    scale:
+      min: 1
+      max: 1

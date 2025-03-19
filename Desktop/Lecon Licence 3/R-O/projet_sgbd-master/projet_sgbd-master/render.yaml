@@ -1,0 +1,56 @@
+services:
+  - type: web
+    name: parrainage-app
+    env: php
+    buildCommand: |
+      composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+      npm ci
+      npm run build
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: heroku-php-apache2 public/
+    envVars:
+      - key: APP_NAME
+        value: Parrainage App
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://parrainage-app.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: parrainage-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: parrainage-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: parrainage-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: parrainage-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: parrainage-db
+          property: password
+      - key: APP_KEY
+        generateValue: true
+      - key: CACHE_DRIVER
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+
+databases:
+  - name: parrainage-db
+    plan: free
+    ipAllowList: []

@@ -1,0 +1,6 @@
+nom,prenom,email,cin,numero_electeur,region_id,date_naissance
+Rakoto,Jean,rakoto.jean@email.com,1234567890123,ABC123XYZ9,1,1990-05-15
+Rabe,Marie,rabe.marie@email.com,9876543210123,DEF456UVW8,2,1985-08-22
+Rasoa,Pierre,rasoa.pierre@email.com,4567890123456,GHI789RST7,3,1992-03-10
+Randria,Anne,randria.anne@email.com,7890123456789,JKL012MNO6,1,1988-11-30
+Rakotonandrasana,Paul,rakoto.paul@email.com,3210987654321,PQR345STU5,2,1995-07-25

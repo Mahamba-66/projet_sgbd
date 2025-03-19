@@ -1,0 +1,35 @@
+{
+    "version": 2,
+    "buildCommand": "chmod +x vercel-build.sh && ./vercel-build.sh",
+    "outputDirectory": "public",
+    "builds": [
+        {
+            "src": "api/index.php",
+            "use": "vercel-php@0.6.0"
+        },
+        {
+            "src": "public/**",
+            "use": "@vercel/static"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(css|js|images|fonts)/(.*)",
+            "dest": "public/$1/$2"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/api/index.php"
+        }
+    ],
+    "env": {
+        "APP_NAME": "Parrainage App",
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "APP_URL": "${VERCEL_URL}",
+        "CACHE_DRIVER": "array",
+        "LOG_CHANNEL": "stderr",
+        "SESSION_DRIVER": "cookie",
+        "VIEW_COMPILED_PATH": "/tmp"
+    }
+}

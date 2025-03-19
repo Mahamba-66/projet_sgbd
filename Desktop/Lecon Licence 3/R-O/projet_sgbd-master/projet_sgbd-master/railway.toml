@@ -1,0 +1,13 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "php artisan serve --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/"
+restartPolicyType = "on_failure"
+
+[env]
+APP_NAME = "Parrainage App"
+APP_ENV = "production"
+APP_DEBUG = "false"
+PHP_VERSION = "8.2"
